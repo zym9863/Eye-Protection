@@ -1,34 +1,113 @@
-import { useState } from 'react';
-import reactLogo from '@/assets/react.svg';
-import wxtLogo from '/wxt.svg';
+import { useState, useEffect, useCallback } from 'react';
+import { settingsItem, DEFAULT_SETTINGS } from '../shared/storage';
+import type { EyeProtectSettings } from '../shared/types';
+import { Toggle } from './components/Toggle';
+import { FeatureCard } from './components/FeatureCard';
 import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [settings, setSettings] = useState<EyeProtectSettings>(DEFAULT_SETTINGS);
+
+  useEffect(() => {
+    settingsItem.getValue().then(setSettings);
+    const unwatch = settingsItem.watch(setSettings);
+    return () => unwatch();
+  }, []);
+
+  const updateSettings = useCallback(async (patch: Partial<EyeProtectSettings>) => {
+    const updated = { ...settings, ...patch };
+    setSettings(updated);
+    await settingsItem.setValue(updated);
+  }, [settings]);
 
   return (
-    <>
-      <div>
-        <a href="https://wxt.dev" target="_blank">
-          <img src={wxtLogo} className="logo" alt="WXT logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      {/* Header */}
+      <div className="header">
+        <div className="header-title">
+          <span className="header-icon">🛡️</span>
+          护眼助手
+        </div>
+        <Toggle
+          checked={settings.masterEnabled}
+          onChange={(v) => updateSettings({ masterEnabled: v })}
+        />
       </div>
-      <h1>WXT + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+
+      {/* Color Temperature */}
+      <FeatureCard
+        icon="☀️"
+        title="色温滤镜"
+        enabled={settings.colorTemp.enabled}
+        onToggle={(v) => updateSettings({ colorTemp: { ...settings.colorTemp, enabled: v } })}
+        sliderLabel="强度"
+        sliderValue={settings.colorTemp.intensity}
+        sliderMin={0}
+        sliderMax={100}
+        sliderUnit="%"
+        onSliderChange={(v) => updateSettings({ colorTemp: { ...settings.colorTemp, intensity: v } })}
+        masterEnabled={settings.masterEnabled}
+      />
+
+      {/* Dark Mode */}
+      <FeatureCard
+        icon="🌙"
+        title="暗色模式"
+        enabled={settings.darkMode.enabled}
+        onToggle={(v) => updateSettings({ darkMode: { ...settings.darkMode, enabled: v } })}
+        sliderLabel="亮度"
+        sliderValue={settings.darkMode.brightness}
+        sliderMin={50}
+        sliderMax={150}
+        sliderUnit="%"
+        onSliderChange={(v) => updateSettings({ darkMode: { ...settings.darkMode, brightness: v } })}
+        masterEnabled={settings.masterEnabled}
+      />
+
+      {/* Break Reminder */}
+      <FeatureCard
+        icon="⏰"
+        title="休息提醒"
+        enabled={settings.breakReminder.enabled}
+        onToggle={(v) => updateSettings({ breakReminder: { ...settings.breakReminder, enabled: v } })}
+        sliderLabel="间隔"
+        sliderValue={settings.breakReminder.intervalMin}
+        sliderMin={5}
+        sliderMax={60}
+        sliderUnit="min"
+        onSliderChange={(v) => updateSettings({ breakReminder: { ...settings.breakReminder, intervalMin: v } })}
+        masterEnabled={settings.masterEnabled}
+      />
+
+      {/* Schedule */}
+      <div className="schedule-section">
+        <div className="schedule-header">
+          <div className="schedule-title">
+            <span>🕐</span>
+            定时开启色温
+          </div>
+          <Toggle
+            checked={settings.schedule.enabled}
+            onChange={(v) => updateSettings({ schedule: { ...settings.schedule, enabled: v } })}
+          />
+        </div>
+        {settings.schedule.enabled && (
+          <div className="schedule-time">
+            <input
+              type="time"
+              value={settings.schedule.startTime}
+              onChange={(e) => updateSettings({ schedule: { ...settings.schedule, startTime: e.target.value } })}
+            />
+            <span className="schedule-time-sep">—</span>
+            <input
+              type="time"
+              value={settings.schedule.endTime}
+              onChange={(e) => updateSettings({ schedule: { ...settings.schedule, endTime: e.target.value } })}
+            />
+          </div>
+        )}
       </div>
-      <p className="read-the-docs">
-        Click on the WXT and React logos to learn more
-      </p>
-    </>
+    </div>
   );
 }
 
