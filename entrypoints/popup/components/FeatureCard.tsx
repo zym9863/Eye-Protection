@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react';
 import { Toggle } from './Toggle';
 
 interface FeatureCardProps {
-  icon: string;
+  icon: ReactNode;
   title: string;
+  description: string;
   enabled: boolean;
   onToggle: (enabled: boolean) => void;
   sliderLabel: string;
@@ -15,23 +17,29 @@ interface FeatureCardProps {
 }
 
 export function FeatureCard({
-  icon, title, enabled, onToggle,
+  icon, title, description, enabled, onToggle,
   sliderLabel, sliderValue, sliderMin, sliderMax, sliderUnit,
   onSliderChange, masterEnabled,
 }: FeatureCardProps) {
   const disabled = !masterEnabled;
+  const canEditSlider = enabled && masterEnabled;
+
   return (
-    <div className={`card ${disabled ? 'disabled' : ''}`}>
-      <div className="card-header">
-        <div className="card-title">
-          <span className="card-icon">{icon}</span>
-          {title}
+    <article className={`feature-card ${disabled ? 'is-disabled' : ''}`}>
+      <div className="feature-card-header">
+        <div className="feature-card-copy">
+          <div className="feature-title-row">
+            <span className="feature-icon">{icon}</span>
+            <h2 className="feature-title">{title}</h2>
+          </div>
+          <p className="feature-description">{description}</p>
         </div>
-        <Toggle checked={enabled && masterEnabled} onChange={onToggle} />
+        <Toggle checked={enabled} onChange={onToggle} disabled={disabled} />
       </div>
-      {enabled && masterEnabled && (
+
+      {canEditSlider && (
         <div className="slider-container">
-          <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{sliderLabel}</span>
+          <span className="slider-label">{sliderLabel}</span>
           <input
             type="range"
             min={sliderMin}
@@ -39,9 +47,12 @@ export function FeatureCard({
             value={sliderValue}
             onChange={(e) => onSliderChange(Number(e.target.value))}
           />
-          <span className="slider-value">{sliderValue}{sliderUnit}</span>
+          <span className="slider-value">
+            {sliderValue}
+            {sliderUnit}
+          </span>
         </div>
       )}
-    </div>
+    </article>
   );
 }
