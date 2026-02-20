@@ -49,21 +49,6 @@ function App() {
         masterEnabled={settings.masterEnabled}
       />
 
-      {/* Dark Mode */}
-      <FeatureCard
-        icon="🌙"
-        title="暗色模式"
-        enabled={settings.darkMode.enabled}
-        onToggle={(v) => updateSettings({ darkMode: { ...settings.darkMode, enabled: v } })}
-        sliderLabel="亮度"
-        sliderValue={settings.darkMode.brightness}
-        sliderMin={50}
-        sliderMax={150}
-        sliderUnit="%"
-        onSliderChange={(v) => updateSettings({ darkMode: { ...settings.darkMode, brightness: v } })}
-        masterEnabled={settings.masterEnabled}
-      />
-
       {/* Break Reminder */}
       <FeatureCard
         icon="⏰"

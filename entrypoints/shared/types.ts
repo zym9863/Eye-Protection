@@ -3,11 +3,6 @@ export interface ColorTempSettings {
   intensity: number; // 0-100
 }
 
-export interface DarkModeSettings {
-  enabled: boolean;
-  brightness: number; // 50-150, default 100
-}
-
 export interface BreakReminderSettings {
   enabled: boolean;
   intervalMin: number; // default 20
@@ -22,7 +17,6 @@ export interface ScheduleSettings {
 export interface EyeProtectSettings {
   masterEnabled: boolean;
   colorTemp: ColorTempSettings;
-  darkMode: DarkModeSettings;
   breakReminder: BreakReminderSettings;
   schedule: ScheduleSettings;
 }
