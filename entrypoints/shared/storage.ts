@@ -1,4 +1,4 @@
-import { storage } from 'wxt/storage';
+import { storage } from 'wxt/utils/storage';
 import type { EyeProtectSettings } from './types';
 
 export const DEFAULT_SETTINGS: EyeProtectSettings = {
