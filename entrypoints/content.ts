@@ -1,6 +1,7 @@
 import { settingsItem } from './shared/storage';
 import { applyColorTemp } from './content/color-temp';
 import { applyDarkMode } from './content/dark-mode';
+import { showBreakReminder, dismissBreakReminder } from './content/break-reminder';
 import type { EyeProtectSettings, MessageAction } from './shared/types';
 
 function applyAllSettings(settings: EyeProtectSettings) {
@@ -22,6 +23,12 @@ export default defineContentScript({
     browser.runtime.onMessage.addListener((message: MessageAction) => {
       if (message.type === 'APPLY_SETTINGS') {
         applyAllSettings(message.settings);
+      }
+      if (message.type === 'SHOW_BREAK_REMINDER') {
+        showBreakReminder();
+      }
+      if (message.type === 'DISMISS_BREAK_REMINDER') {
+        dismissBreakReminder();
       }
     });
   },
