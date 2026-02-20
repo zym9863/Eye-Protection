@@ -1,6 +1,6 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "eye-protection",
+  "description": "护眼浏览器扩展 - 色温滤镜、暗色模式、休息提醒",
   "private": true,
   "version": "0.0.0",
   "type": "module",
